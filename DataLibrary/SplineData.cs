@@ -23,6 +23,16 @@ namespace DataLibrary
             RightDer = rightSecDer;
             DataItems = new List<SplineDataItem>();
         }
+
+        public SplineData(RawData rawData, double[] ders, int nodeCnt)
+        {
+            Data = rawData;
+            NodeCnt = nodeCnt;
+            LeftDer = ders[0];
+            RightDer = ders[1];
+            DataItems = new List<SplineDataItem>();
+        }
+
         public void Interpolate()
         {
             double[] field = new double[NodeCnt];

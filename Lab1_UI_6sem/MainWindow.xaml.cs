@@ -77,7 +77,8 @@ namespace Lab1_UI_6sem
         private void FromCtrls_Click(object sender, RoutedEventArgs e)
         {
             this.RawData_Init();
-            viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
+            //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
+            viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
             viewData.spline.Interpolate();
             viewData.SplineIntegral = viewData.spline.Integral.ToString() + "TEST";
             //Thread.Sleep(300);
@@ -109,13 +110,18 @@ namespace Lab1_UI_6sem
                 RawDataList.Clear();
                 viewData.data = new RawData(loader.FileName);
                 //this.RawData_Init();
-                viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
+                //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
+                viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
                 viewData.spline.Interpolate();
                 //Thread.Sleep(300);
                 for (int i = 0; i < viewData.data.NodeCnt; ++i)
                 {
                     RawDataList.Add($"Point: {string.Format("{0:f3}", viewData.data.Grid[i])};" +
                         $" Value: {string.Format("{0:f3}", viewData.data.Field[i])}");
+                }
+                for (int i = 0; i < viewData.spline.NodeCnt; ++i)
+                {
+                    SplineDataList.Add(viewData.spline.DataItems[i].ToString());
                 }
                 rawDataLb.Items.Refresh();
                 splineLb.Items.Refresh();
@@ -270,6 +276,41 @@ namespace Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value;
+        }
+    }
+
+    public class DerConverterSingle : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is double[]))
+                throw new NotImplementedException();
+            return ((double[])value)[0].ToString() + "#" + ((double[])value)[1].ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!((string)value).Contains('#'))
+            {
+                return new double[2]{ 0f, 0f };
+            }
+            int i = 0;
+            double[] vals = new double[2];
+            foreach (string x in ((string)value).Split('#'))
+            {
+
+                if (!double.TryParse(x, out vals[i]))
+                    vals[i] = 0f;
+                ++i;
+            }
+            if (i == 2)
+            {
+                return new double[2] { vals[0], vals[1] };
+            }
+            else
+            {
+                return new double[2] { 0f, 0f };
+            }
         }
     }
 }

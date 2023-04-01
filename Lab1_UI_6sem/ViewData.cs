@@ -17,6 +17,7 @@ namespace Lab1_UI_6sem
         public FRawEnum Func { get; set; }
         public double LeftDer { get; set; }
         public double RightDer { get; set; }
+        public double[] Ders { get; set; }
         public int NodeCntSpline { get; set; }
 
         /*
