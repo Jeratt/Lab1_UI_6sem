@@ -27,6 +27,7 @@ namespace Lab1_UI_6sem
     /// </summary>
     public partial class MainWindow : Window
     {
+        OxyPlotModel plot;
         //public DerConverter derConverter = new DerConverter();
         public ViewData viewData { get; set; }
         public List<String> RawDataList { get; }
@@ -102,6 +103,8 @@ namespace Lab1_UI_6sem
             rawDataLb.Items.Refresh();
             //splineLb.SetBinding(ListBox.ItemsSourceProperty, new Binding("SplineDataList"));
             splineLb.Items.Refresh();
+            plot = new OxyPlotModel(viewData.spline);
+            main_plot.Model = plot.plotModel;
             //TextBlockIntegral.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
             //BindingOperations.ClearAllBindings(TextBlockIntegral);
             //TextBlockIntegral.SetBinding(TextBox.TextProperty, new Binding("IntegralValue"));
@@ -133,6 +136,8 @@ namespace Lab1_UI_6sem
                     rawDataLb.Items.Refresh();
                     splineLb.Items.Refresh();
                     //Thread.Sleep(300);
+                    plot = new OxyPlotModel(viewData.spline);
+                    main_plot.Model = plot.plotModel;
                 }
                 else
                 {
