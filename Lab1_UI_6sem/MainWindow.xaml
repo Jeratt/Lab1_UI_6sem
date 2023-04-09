@@ -73,6 +73,5 @@
         <Button Content="Save" Click="Save_Click" HorizontalAlignment="Center" Margin="0,105,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
         <Button Content="Execute RawData from Controls" Click="FromCtrls_Click" HorizontalAlignment="Center" Margin="0,143,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
         <Button Content="Execute RawData from File" Click="FromFile_Click" HorizontalAlignment="Center" Margin="0,181,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
-        <TextBlock x:Name="TEST" HorizontalAlignment="Left" Margin="270,135,0,0" Grid.Row="1" TextWrapping="Wrap" Text="{Binding viewData.SplineIntegral, ElementName=MyWindow, Mode=OneWay}" VerticalAlignment="Top" Height="27" Width="99"/>
     </Grid>
 </Window>
