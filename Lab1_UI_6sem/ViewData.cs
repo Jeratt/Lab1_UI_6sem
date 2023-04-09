@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using DataLibrary;
 
 namespace Lab1_UI_6sem
 {
-    public class ViewData
+    public class ViewData: IDataErrorInfo
     {
         public double Left { get; set; }
         public double Right { get; set; }
@@ -27,6 +28,34 @@ namespace Lab1_UI_6sem
         }*/
         
         public string SplineIntegral { get; set; }
+
+        public string Error {
+            get { return "Входные данные некорректны!"; }
+        }
+
+        public string this[string columnName]
+        {
+            get {
+                string result = string.Empty;
+                switch (columnName)
+                {
+                    case "NodeCnt":
+                        if (NodeCnt < 2)
+                            result = "Интерполируемая функция должна быть измерена\nхотя бы в двух точках!";
+                        break;
+                    case "NodeCntSpline":
+                        if (NodeCntSpline < 2)
+                            result = "Интерполяция должна проводиться\nхотя бы в двух точках!";
+                        break;
+                    case "Right":
+                        if (Right <= Left)
+                            result = "Правый конец отрезка должен\nбыть больше левого!";
+                        break;
+                }
+                return result;
+            }
+
+        }
 
         public RawData? data;
         public SplineData? spline;
