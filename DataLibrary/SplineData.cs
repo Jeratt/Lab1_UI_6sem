@@ -82,7 +82,7 @@ namespace DataLibrary
                             firstDer[i / 3] = results[i];
                             break;
                         case 2:
-                            field[i / 3] = results[i];
+                            secDer[i / 3] = results[i];
                             break;
                     }
                 }
