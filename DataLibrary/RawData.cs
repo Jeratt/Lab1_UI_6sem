@@ -53,15 +53,21 @@ namespace DataLibrary
         }
         public RawData(string filename)
         {
-            Load(filename, out RawData rawData);
+            try
+            {
+                Load(filename, out RawData rawData);
+                Left = rawData.Left;
+                Right = rawData.Right;
+                NodeCnt = rawData.NodeCnt;
+                IsUnifgorm = rawData.IsUnifgorm;
+                Func = rawData.Func;
+                Grid = rawData.Grid;
+                Field = rawData.Field;
+            }
+            catch(Exception x) {
+                throw;
+            }
             //Load("C:\\Users\\gera9\\OneDrive\\Рабочий стол\\exp3", out RawData rawData);
-            Left = rawData.Left;
-            Right = rawData.Right;
-            NodeCnt = rawData.NodeCnt;
-            IsUnifgorm = rawData.IsUnifgorm;
-            Func = rawData.Func;
-            Grid = rawData.Grid;
-            Field= rawData.Field;
         }
         public void Save(string filename)
         {

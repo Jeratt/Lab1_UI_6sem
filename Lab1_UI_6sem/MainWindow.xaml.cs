@@ -42,6 +42,8 @@ namespace Lab1_UI_6sem
             get;
         }
         public static RoutedCommand ExecuteRawDataFromControlsCommand = new RoutedCommand("ExecuteRawDataFromControlsCommand", typeof(MainWindow));
+        public static RoutedCommand ExecuteRawDataFromFileCommand = new RoutedCommand("ExecuteRawDataFromFileCommand", typeof(MainWindow));
+
 
         public MainWindow()
         {
@@ -50,6 +52,7 @@ namespace Lab1_UI_6sem
             SplineDataList = new List<String>();
             InitializeComponent();
             this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromControlsCommand, FromCtrls_Click, CanExecuteRawDataFromControlsCommandHandler));
+            this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromFileCommand, FromFile_Click, CanExecuteRawDataFromFileCommandHandler));
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -108,31 +111,36 @@ namespace Lab1_UI_6sem
         private void FromFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog loader = new Microsoft.Win32.OpenFileDialog();
-            if ((bool)loader.ShowDialog())
-            {
-                RawDataList.Clear();
-                viewData.data = new RawData(loader.FileName);
-                //this.RawData_Init();
-                //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
-                viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
-                viewData.spline.Interpolate();
-                //Thread.Sleep(300);
-                for (int i = 0; i < viewData.data.NodeCnt; ++i)
+            try {
+                if ((bool)loader.ShowDialog())
                 {
-                    RawDataList.Add($"Point: {string.Format("{0:f3}", viewData.data.Grid[i])};" +
-                        $" Value: {string.Format("{0:f3}", viewData.data.Field[i])}");
+                    RawDataList.Clear();
+                    viewData.data = new RawData(loader.FileName);
+                    //this.RawData_Init();
+                    //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
+                    viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
+                    viewData.spline.Interpolate();
+                    //Thread.Sleep(300);
+                    for (int i = 0; i < viewData.data.NodeCnt; ++i)
+                    {
+                        RawDataList.Add($"Point: {string.Format("{0:f3}", viewData.data.Grid[i])};" +
+                            $" Value: {string.Format("{0:f3}", viewData.data.Field[i])}");
+                    }
+                    for (int i = 0; i < viewData.spline.NodeCnt; ++i)
+                    {
+                        SplineDataList.Add(viewData.spline.DataItems[i].ToString());
+                    }
+                    rawDataLb.Items.Refresh();
+                    splineLb.Items.Refresh();
+                    //Thread.Sleep(300);
                 }
-                for (int i = 0; i < viewData.spline.NodeCnt; ++i)
+                else
                 {
-                    SplineDataList.Add(viewData.spline.DataItems[i].ToString());
+                    MessageBox.Show("Error on loading\n raw data!");
                 }
-                rawDataLb.Items.Refresh();
-                splineLb.Items.Refresh();
-                //Thread.Sleep(300);
             }
-            else
-            {
-                MessageBox.Show("Error on loading\n raw data!");
+            catch(Exception x) {
+                MessageBox.Show("Wrong data read\n from file!!!");
             }
         }
 
@@ -159,6 +167,14 @@ namespace Lab1_UI_6sem
         private void CanExecuteRawDataFromControlsCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {
             if (Validation.GetHasError(Right) || Validation.GetHasError(NodeCnt) || Validation.GetHasError(NodeCntSpline))
+                e.CanExecute = false;
+            else
+                e.CanExecute = true;
+        }
+
+        private void CanExecuteRawDataFromFileCommandHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (Validation.GetHasError(NodeCntSpline))
                 e.CanExecute = false;
             else
                 e.CanExecute = true;
