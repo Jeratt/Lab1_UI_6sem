@@ -41,12 +41,15 @@ namespace Lab1_UI_6sem
         {
             get;
         }
+        public static RoutedCommand ExecuteRawDataFromControlsCommand = new RoutedCommand("ExecuteRawDataFromControlsCommand", typeof(MainWindow));
+
         public MainWindow()
         {
             viewData = new ViewData();
             RawDataList = new List<string>();
             SplineDataList = new List<String>();
             InitializeComponent();
+            this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromControlsCommand, FromCtrls_Click, CanExecuteRawDataFromControlsCommandHandler));
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -152,9 +155,15 @@ namespace Lab1_UI_6sem
                     break;
             }
         }
+
+        private void CanExecuteRawDataFromControlsCommandHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (Validation.GetHasError(Right) || Validation.GetHasError(NodeCnt) || Validation.GetHasError(NodeCntSpline))
+                e.CanExecute = false;
+            else
+                e.CanExecute = true;
+        }
     }
-
-
 }
 
 namespace Converters
