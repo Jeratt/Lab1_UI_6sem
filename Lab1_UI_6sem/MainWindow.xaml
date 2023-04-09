@@ -62,7 +62,7 @@
         <Label Grid.Column="1" Content="Интеграл:" Margin="10,164,0,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Height="26"/>
         <Menu Grid.ColumnSpan="2">
             <MenuItem Cursor="AppStarting" Header="File" Click="MenuItem_Click">
-                <MenuItem Header="Save" Click="Save_Click"/>
+                <MenuItem Header="Save" Command="ApplicationCommands.Save"/>
             </MenuItem>
 
             <MenuItem Header="Execute" Click="MenuItem_Click_1">
@@ -70,7 +70,7 @@
                 <MenuItem Header="RawData from file" Command="{x:Static local:MainWindow.ExecuteRawDataFromFileCommand}"/>
             </MenuItem>
         </Menu>
-        <Button Content="Save" Click="Save_Click" HorizontalAlignment="Center" Margin="0,105,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
+        <Button Content="Save" Command="ApplicationCommands.Save" HorizontalAlignment="Center" Margin="0,105,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
         <Button Content="Execute RawData from Controls" Command="{x:Static local:MainWindow.ExecuteRawDataFromControlsCommand}"  HorizontalAlignment="Center" Margin="0,143,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
         <Button Content="Execute RawData from File" Command="{x:Static local:MainWindow.ExecuteRawDataFromFileCommand}" HorizontalAlignment="Center" Margin="0,181,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
     </Grid>

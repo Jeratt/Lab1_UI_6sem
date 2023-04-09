@@ -43,8 +43,6 @@ namespace Lab1_UI_6sem
         }
         public static RoutedCommand ExecuteRawDataFromControlsCommand = new RoutedCommand("ExecuteRawDataFromControlsCommand", typeof(MainWindow));
         public static RoutedCommand ExecuteRawDataFromFileCommand = new RoutedCommand("ExecuteRawDataFromFileCommand", typeof(MainWindow));
-
-
         public MainWindow()
         {
             viewData = new ViewData();
@@ -53,6 +51,8 @@ namespace Lab1_UI_6sem
             InitializeComponent();
             this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromControlsCommand, FromCtrls_Click, CanExecuteRawDataFromControlsCommandHandler));
             this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromFileCommand, FromFile_Click, CanExecuteRawDataFromFileCommandHandler));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Save_Click, CanSaveCommandHandler));
+
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -171,11 +171,19 @@ namespace Lab1_UI_6sem
             else
                 e.CanExecute = true;
         }
-
         private void CanExecuteRawDataFromFileCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {
             if (Validation.GetHasError(NodeCntSpline))
                 e.CanExecute = false;
+            else
+                e.CanExecute = true;
+        }
+        private void CanSaveCommandHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (Validation.GetHasError(NodeCnt) || Validation.GetHasError(Right))
+            {
+                e.CanExecute = false;
+            }
             else
                 e.CanExecute = true;
         }
