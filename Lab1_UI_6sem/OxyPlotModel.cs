@@ -15,9 +15,11 @@ namespace Lab1_UI_6sem
     {
         public PlotModel plotModel { get; private set; }
         SplineData data;
-        public OxyPlotModel(SplineData data)
+        RawData rawData;
+        public OxyPlotModel(SplineData data, RawData rawData)
         {
             this.data = data;
+            this.rawData = rawData;
             this.plotModel = new PlotModel { Title = "Spline Interpolation result" };
             AddSeries();
         }
@@ -40,6 +42,24 @@ namespace Lab1_UI_6sem
             }
             plotModel.Legends.Add(legend);
             this.plotModel.Series.Add(lineSeries);
+
+// this.plotModel.Series.Clear();
+            Legend legend_rd = new Legend();
+            LineSeries lineSeries_rd = new LineSeries();
+            for (int js = 0; js < rawData.NodeCnt; js++)
+            {
+                OxyColor color = (js == 0) ? OxyColors.Red : OxyColors.Black;
+                lineSeries_rd.Points.Add(new DataPoint(rawData.Grid[js], rawData.Field[js]));
+                lineSeries_rd.Color = color;
+
+                lineSeries_rd.MarkerType = MarkerType.Circle;
+                lineSeries_rd.MarkerSize = 4;
+                lineSeries_rd.MarkerStroke = color;
+                lineSeries_rd.MarkerFill = color;
+                lineSeries_rd.Title = "Original function";
+            }
+            plotModel.Legends.Add(legend_rd);
+            this.plotModel.Series.Add(lineSeries_rd);
         }
     }
 }

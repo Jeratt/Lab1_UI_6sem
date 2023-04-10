@@ -103,7 +103,7 @@ namespace Lab1_UI_6sem
             rawDataLb.Items.Refresh();
             //splineLb.SetBinding(ListBox.ItemsSourceProperty, new Binding("SplineDataList"));
             splineLb.Items.Refresh();
-            plot = new OxyPlotModel(viewData.spline);
+            plot = new OxyPlotModel(viewData.spline, viewData.data);
             main_plot.Model = plot.plotModel;
             //TextBlockIntegral.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
             //BindingOperations.ClearAllBindings(TextBlockIntegral);
@@ -136,7 +136,7 @@ namespace Lab1_UI_6sem
                     rawDataLb.Items.Refresh();
                     splineLb.Items.Refresh();
                     //Thread.Sleep(300);
-                    plot = new OxyPlotModel(viewData.spline);
+                    plot = new OxyPlotModel(viewData.spline, viewData.data);
                     main_plot.Model = plot.plotModel;
                 }
                 else
