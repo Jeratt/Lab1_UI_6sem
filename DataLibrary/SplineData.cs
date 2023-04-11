@@ -62,15 +62,15 @@ namespace DataLibrary
             int[] dorder = new int[3] { 1, 1, 1 };
             double[] results = new double[3 * ny * nsite];
 
-            double[] llim = new double[1] { site[0] };
-            double[] rlim = new double[1] { site[nsite-1] };
+            double[] llim = new double[1] { Data.Left };
+            double[] rlim = new double[1] { Data.Right };
 
             double[] ders = new double[2] { LeftDer, RightDer };
 
             double[] integrals = new double[1];
             try
             {
-                CubeInterpolate(nx, Data.IsUnifgorm ? new double[] {Data.Left, Data.Right} : x, ny, y, ders, scoeff, nsite, Data.IsUnifgorm ? new double[] { site[0], site[nsite-1] } : site, 3, dorder, results, 1, llim, rlim, integrals, ref ret, Data.IsUnifgorm);
+                CubeInterpolate(nx, x, ny, y, ders, scoeff, nsite, new double[] { Data.Left, Data.Right }, 3, dorder, results, 1, llim, rlim, integrals, ref ret, Data.IsUnifgorm);
                 Integral = integrals[0];
                 for (int i = 0; i < results.Length; ++i)
                 {
