@@ -34,10 +34,12 @@ namespace Lab1_UI_6sem
                 lineSeries.Points.Add(new DataPoint(data.DataItems[js].Coord, data.DataItems[js].Spline));
                 lineSeries.Color = color;
 
+                /*
                 lineSeries.MarkerType = MarkerType.Circle;
                 lineSeries.MarkerSize = 4;
                 lineSeries.MarkerStroke = color;
                 lineSeries.MarkerFill = color;
+                */
                 lineSeries.Title = "Cubic spline interpolation";
             }
             plotModel.Legends.Add(legend);
