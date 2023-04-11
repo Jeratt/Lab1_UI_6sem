@@ -50,19 +50,20 @@ namespace DataLibrary
             int nsite = NodeCnt;
             int ret = 0;
             double[] site = new double[nsite];
-            site[0] = Data.Left;
-            site[nsite - 1] = Data.Right;
-            for(int i = 1; i < NodeCnt - 1; ++i)
+            //site[0] = Data.Left;
+            //site[nsite - 1] = Data.Right;
+            double delta = (Data.Right - Data.Left) / ((nsite - 1) == 0 ? 1 : nsite - 1);
+            for (int i = 0; i < NodeCnt; ++i)
             {
-                site[i] = site[i - 1] + (Data.Right - Data.Left) / NodeCnt;
+                site[i] = Data.Left + i * delta;
             }
 
             double[] scoeff = new double[4 * (nx - 1) * ny];
             int[] dorder = new int[3] { 1, 1, 1 };
             double[] results = new double[3 * ny * nsite];
 
-            double[] llim = new double[1] { Data.Left };
-            double[] rlim = new double[1] { Data.Right };
+            double[] llim = new double[1] { site[0] };
+            double[] rlim = new double[1] { site[nsite-1] };
 
             double[] ders = new double[2] { LeftDer, RightDer };
 

@@ -44,12 +44,15 @@ namespace Lab1_UI_6sem
         }
         public static RoutedCommand ExecuteRawDataFromControlsCommand = new RoutedCommand("ExecuteRawDataFromControlsCommand", typeof(MainWindow));
         public static RoutedCommand ExecuteRawDataFromFileCommand = new RoutedCommand("ExecuteRawDataFromFileCommand", typeof(MainWindow));
+        public BindingExpression exp;
         public MainWindow()
         {
             viewData = new ViewData();
             RawDataList = new List<string>();
             SplineDataList = new List<String>();
             InitializeComponent();
+            exp = TextBlockIntegral.GetBindingExpression(TextBlock.TextProperty);
+            DataContext = viewData;
             this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromControlsCommand, FromCtrls_Click, CanExecuteRawDataFromControlsCommandHandler));
             this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromFileCommand, FromFile_Click, CanExecuteRawDataFromFileCommandHandler));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Save_Click, CanSaveCommandHandler));
@@ -63,7 +66,7 @@ namespace Lab1_UI_6sem
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            this.RawData_Init();
+            viewData.InitRawData();
             Microsoft.Win32.SaveFileDialog saver = new Microsoft.Win32.SaveFileDialog();
             if ((bool)saver.ShowDialog() && viewData != null)
             {
@@ -83,32 +86,15 @@ namespace Lab1_UI_6sem
 
         private void FromCtrls_Click(object sender, RoutedEventArgs e)
         {
-            this.RawData_Init();
-            //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
-            viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
-            viewData.spline.Interpolate();
-            viewData.SplineIntegral = viewData.spline.Integral.ToString() + "TEST";
-            //Thread.Sleep(300);
-            for (int i = 0; i < viewData.data.NodeCnt; ++i)
-            {
-                RawDataList.Add($"Point: {string.Format("{0:f3}", viewData.data.Grid[i])};" +
-                    $" Value: {string.Format("{0:f3}", viewData.data.Field[i])}");
-            }
-            for (int i = 0; i < viewData.spline.NodeCnt; ++i)
-            {
-                SplineDataList.Add(viewData.spline.DataItems[i].ToString());
-            }
-            //Thread.Sleep(300);
-            //MessageBox.Show(rawDataLb.Items.ToString());
+            viewData.InitRawData();
+            viewData.InitSpline();
+            viewData.Interpolate();
+            //TextBlockIntegral.Refresh();
             rawDataLb.Items.Refresh();
-            //splineLb.SetBinding(ListBox.ItemsSourceProperty, new Binding("SplineDataList"));
             splineLb.Items.Refresh();
+            exp.UpdateTarget();
             plot = new OxyPlotModel(viewData.spline, viewData.data);
             main_plot.Model = plot.plotModel;
-            //TextBlockIntegral.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
-            //BindingOperations.ClearAllBindings(TextBlockIntegral);
-            //TextBlockIntegral.SetBinding(TextBox.TextProperty, new Binding("IntegralValue"));
-            //TextBlockIntegral.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
         }
 
         private void FromFile_Click(object sender, RoutedEventArgs e)
@@ -117,25 +103,12 @@ namespace Lab1_UI_6sem
             try {
                 if ((bool)loader.ShowDialog())
                 {
-                    RawDataList.Clear();
-                    viewData.data = new RawData(loader.FileName);
-                    //this.RawData_Init();
-                    //viewData.spline = new SplineData(viewData.data, viewData.LeftDer, viewData.RightDer, viewData.NodeCntSpline);
-                    viewData.spline = new SplineData(viewData.data, viewData.Ders, viewData.NodeCntSpline);
-                    viewData.spline.Interpolate();
-                    //Thread.Sleep(300);
-                    for (int i = 0; i < viewData.data.NodeCnt; ++i)
-                    {
-                        RawDataList.Add($"Point: {string.Format("{0:f3}", viewData.data.Grid[i])};" +
-                            $" Value: {string.Format("{0:f3}", viewData.data.Field[i])}");
-                    }
-                    for (int i = 0; i < viewData.spline.NodeCnt; ++i)
-                    {
-                        SplineDataList.Add(viewData.spline.DataItems[i].ToString());
-                    }
+                    viewData.InitRawDataFromFile(loader.FileName);
+                    viewData.InitSpline();
+                    viewData.Interpolate();
                     rawDataLb.Items.Refresh();
                     splineLb.Items.Refresh();
-                    //Thread.Sleep(300);
+                    exp.UpdateTarget();
                     plot = new OxyPlotModel(viewData.spline, viewData.data);
                     main_plot.Model = plot.plotModel;
                 }
