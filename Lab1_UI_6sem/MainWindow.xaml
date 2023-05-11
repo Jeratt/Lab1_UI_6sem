@@ -76,13 +76,13 @@
             </MenuItem>
 
             <MenuItem Header="Execute" Click="MenuItem_Click_1">
-                <MenuItem Header="RawData from controls" Command="{x:Static local:MainWindow.ExecuteRawDataFromControlsCommand}"/>
-                <MenuItem Header="RawData from file" Command="{x:Static local:MainWindow.ExecuteRawDataFromFileCommand}"/>
+                <MenuItem Header="RawData from controls" Command="{Binding ExecuteRawDataFromControlsCommand}"/>
+                <MenuItem Header="RawData from file" Command="{Binding ExecuteRawDataFromFileCommand}"/>
             </MenuItem>
         </Menu>
-        <Button Content="Save" Command="ApplicationCommands.Save" HorizontalAlignment="Center" Margin="0,105,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
-        <Button Content="Execute RawData from Controls" Command="{x:Static local:MainWindow.ExecuteRawDataFromControlsCommand}"  HorizontalAlignment="Center" Margin="0,143,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
-        <Button Content="Execute RawData from File" Command="{x:Static local:MainWindow.ExecuteRawDataFromFileCommand}" HorizontalAlignment="Center" Margin="0,181,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
-        <oxy:PlotView x:Name="main_plot" HorizontalAlignment="Left" Margin="24,238,0,-351" Grid.Row="2" Grid.ColumnSpan="2" Width="776"/>
+        <Button Content="Save" Command="{Binding SaveRawDataCommand, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" HorizontalAlignment="Center" Margin="0,105,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
+        <Button Content="Execute RawData from Controls" Command="{Binding ExecuteRawDataFromControlsCommand, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"  HorizontalAlignment="Center" Margin="0,143,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
+        <Button Content="Execute RawData from File" Command="{Binding ExecuteRawDataFromFileCommand, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" HorizontalAlignment="Center" Margin="0,181,0,0" Grid.Row="2" VerticalAlignment="Top" Height="26" Width="362"/>
+        <oxy:PlotView x:Name="main_plot" Model="{Binding Plot.plotModel, Mode=OneWay}" HorizontalAlignment="Left" Margin="24,238,0,-351" Grid.Row="2" Grid.ColumnSpan="2" Width="776"/>
     </Grid>
 </Window>
