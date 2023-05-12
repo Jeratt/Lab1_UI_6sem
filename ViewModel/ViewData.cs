@@ -49,17 +49,6 @@ namespace ViewModel
         public ICommand ExecuteRawDataFromFileCommand { get; private set; }
         public ICommand SaveRawDataCommand { get; private set; }
 
-        /*
-        public double Integral
-        {
-            get
-            {
-                if (spline is null)
-                    return 0;
-                return spline.Integral;
-            }
-        }*/
-
         public string Integral
         {
             get
@@ -67,7 +56,6 @@ namespace ViewModel
                 return spline?.Integral.ToString() ?? "";
             }
         }
-
 
         public string Error
         {
