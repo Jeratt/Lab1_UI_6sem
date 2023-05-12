@@ -65,7 +65,7 @@ namespace Lab1_UI_6sem
 
     public class DialogWindows: IDialogWindows
     {
-        public bool OpenForSave(out string filename)
+        public bool openForSave(out string filename)
         {
             Microsoft.Win32.SaveFileDialog saver = new Microsoft.Win32.SaveFileDialog();
             if ((bool)saver.ShowDialog())
@@ -80,7 +80,7 @@ namespace Lab1_UI_6sem
             }
         }
 
-        public bool OpenForLoad(out string filename)
+        public bool openForLoad(out string filename)
         {
             Microsoft.Win32.OpenFileDialog loader = new Microsoft.Win32.OpenFileDialog();
             try
@@ -103,6 +103,18 @@ namespace Lab1_UI_6sem
             }
         }
     }
+
+    /*
+    public class Refresher : IRefresher
+    {
+        public void refreshUi(params ListBox[] lbs)
+        {
+            foreach(ListBox l in lbs)
+            {
+                l.Items.Refresh();
+            }
+        }
+    }*/
 }
 
 namespace Converters

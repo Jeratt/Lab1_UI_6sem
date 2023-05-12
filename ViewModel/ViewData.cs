@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using DataLibrary;
 
@@ -18,8 +20,13 @@ namespace ViewModel
 
     public interface IDialogWindows
     {
-        public bool OpenForLoad(out string filename);
-        public bool OpenForSave(out string filename);
+        public bool openForLoad(out string filename);
+        public bool openForSave(out string filename);
+    }
+
+    public interface IRefresher
+    {
+        public void refreshUi(params ListBox[] lbs);
     }
 
     public class ViewData : ViewModelBase, IDataErrorInfo
@@ -36,11 +43,13 @@ namespace ViewModel
 
         private readonly IErrorReporter errorReporter;
         public readonly IDialogWindows dialogInt;
+        //public readonly IRefresher refresher;
 
         public ICommand ExecuteRawDataFromControlsCommand { get; private set; }
         public ICommand ExecuteRawDataFromFileCommand { get; private set; }
         public ICommand SaveRawDataCommand { get; private set; }
 
+        /*
         public double Integral
         {
             get
@@ -49,15 +58,16 @@ namespace ViewModel
                     return 0;
                 return spline.Integral;
             }
-        }
-
-        /*
-        public string? SplineIntegral
-        {
-            get { return spline?.Integral.ToString(); }
         }*/
 
-        //public string SplineIntegral { get; set; }
+        public string Integral
+        {
+            get
+            {
+                return spline?.Integral.ToString() ?? "";
+            }
+        }
+
 
         public string Error
         {
@@ -91,8 +101,8 @@ namespace ViewModel
 
         public RawData? data;
         public SplineData? spline;
-        public List<String> RawDataList { get; }
-        public List<SplineDataItem> DataItems { get; }
+        public ObservableCollection<String> RawDataList { get; }
+        public ObservableCollection<SplineDataItem> DataItems { get; }
 
         public OxyPlotModel Plot { get; set; }
 
@@ -100,12 +110,13 @@ namespace ViewModel
         {
             this.errorReporter = errorReporter;
             this.dialogInt = dialogInt;
+            //this.refresher = refresher;
             ExecuteRawDataFromControlsCommand = new RelayCommand(FromCtrls_Click, _ => CanExecuteRawDataFromControlsCommandHandler());
             ExecuteRawDataFromFileCommand = new RelayCommand(FromFile_Click, _ => CanExecuteRawDataFromFileCommandHandler());
             SaveRawDataCommand = new RelayCommand(Save_Click, _ => CanSaveCommandHandler());
             Ders = new double[2];
-            RawDataList = new List<string>();
-            DataItems = new List<SplineDataItem>();
+            RawDataList = new ObservableCollection<string>();
+            DataItems = new ObservableCollection<SplineDataItem>();
         }
 
         public void Save(string filename)
@@ -113,7 +124,6 @@ namespace ViewModel
             if (data is null)
             {
                 errorReporter.reportError("Nothing to save!");
-                //MessageBox.Show("Nothing to save!");
                 return;
             }
             try
@@ -123,7 +133,6 @@ namespace ViewModel
             catch (Exception x)
             {
                 errorReporter.reportError("ERROR SAVING FILE ! ! !: {x}");
-                //MessageBox.Show($"ERROR SAVING FILE ! ! !: {x}");
             }
         }
 
@@ -136,7 +145,6 @@ namespace ViewModel
             catch (Exception x)
             {
                 errorReporter.reportError($"ERROR LOADING FILE ! ! !: {x}");
-                //MessageBox.Show($"ERROR LOADING FILE ! ! !: {x}");
             }
         }
 
@@ -188,20 +196,10 @@ namespace ViewModel
 
         private bool CanExecuteRawDataFromControlsCommandHandler()
         {
-            /*
-            if (Validation.GetHasError(Right) || Validation.GetHasError(NodeCnt) || Validation.GetHasError(NodeCntSpline))
-                e.CanExecute = false;
-            else
-                e.CanExecute = true;*/
             return String.Empty == this[nameof(Right)] && String.Empty == this[nameof(NodeCnt)] && String.Empty == this[nameof(NodeCntSpline)];
         }
         private bool CanExecuteRawDataFromFileCommandHandler()
         {
-            /*
-            if (Validation.GetHasError(NodeCntSpline))
-                e.CanExecute = false;
-            else
-                e.CanExecute = true;*/
             return String.Empty == this[nameof(NodeCntSpline)];
         }
         private bool CanSaveCommandHandler()
@@ -229,12 +227,14 @@ namespace ViewModel
             RaisePropertyChanged(nameof(RawDataList));
             RaisePropertyChanged(nameof(DataItems));
             RaisePropertyChanged(nameof(Plot));
+            RaisePropertyChanged(nameof(Integral));
+            //refresher.refreshUi();
         }
 
         private void FromFile_Click(object sender)
         {
             string filename;
-            if (this.dialogInt.OpenForLoad(out filename))
+            if (this.dialogInt.openForLoad(out filename))
             {
                 InitRawDataFromFile(filename);
                 InitSpline();
@@ -243,6 +243,7 @@ namespace ViewModel
                 RaisePropertyChanged(nameof(RawDataList));
                 RaisePropertyChanged(nameof(DataItems));
                 RaisePropertyChanged(nameof(Plot));
+                RaisePropertyChanged(nameof(Integral));
             }
             else
             {
@@ -254,7 +255,7 @@ namespace ViewModel
         {
             string filename;
             InitRawData();
-            if (dialogInt.OpenForSave(out filename))
+            if (dialogInt.openForSave(out filename))
             {
                 Save(filename);
             }
