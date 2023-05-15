@@ -29,6 +29,27 @@ namespace ViewModel
         public void refreshUi(params ListBox[] lbs);
     }
 
+    public class SplineDataItemViewModel
+    {
+        public SplineDataItem DataItem { get; set; }
+        public SplineDataItemViewModel(SplineDataItem dataItem)
+        {
+            DataItem = dataItem;
+        }
+        public string Template
+        {
+            get
+            {
+                return DataItem.TemplateToString();
+            }
+        }
+
+        public override string ToString()
+        {
+            return DataItem.ToString();
+        }
+    }
+
     public class ViewData : ViewModelBase, IDataErrorInfo
     {
         public double Left { get; set; }
@@ -87,10 +108,10 @@ namespace ViewModel
 
         }
 
-        public RawData? data;
-        public SplineData? spline;
+        private RawData? data;
+        private SplineData? spline;
         public ObservableCollection<String> RawDataList { get; }
-        public ObservableCollection<SplineDataItem> DataItems { get; }
+        public ObservableCollection<SplineDataItemViewModel> DataItems { get; }
 
         public OxyPlotModel Plot { get; set; }
 
@@ -104,7 +125,7 @@ namespace ViewModel
             SaveRawDataCommand = new RelayCommand(Save_Click, _ => CanSaveCommandHandler());
             Ders = new double[2];
             RawDataList = new ObservableCollection<string>();
-            DataItems = new ObservableCollection<SplineDataItem>();
+            DataItems = new ObservableCollection<SplineDataItemViewModel>();
         }
 
         public void Save(string filename)
@@ -178,7 +199,7 @@ namespace ViewModel
             }
             for (int i = 0; i < spline.NodeCnt; ++i)
             {
-                DataItems.Add(spline.DataItems[i]);
+                DataItems.Add(new SplineDataItemViewModel(spline.DataItems[i]));
             }
         }
 
