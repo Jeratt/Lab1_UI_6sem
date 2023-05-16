@@ -42,7 +42,7 @@ namespace DataLibrary
             {
                 for(int i = 1; i < nodeCnt - 1; ++i)
                 {
-                    Grid[i] = Left + i * (Right - Left) / NodeCnt;
+                    Grid[i] = Left + i * (Right - Left) / (NodeCnt - 1);
                 }
             }
 

@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModel;
 
 namespace Lab1_UI_6sem
 {
@@ -27,36 +28,10 @@ namespace Lab1_UI_6sem
     /// </summary>
     public partial class MainWindow : Window
     {
-        OxyPlotModel plot;
-        //public DerConverter derConverter = new DerConverter();
-        public ViewData viewData { get; set; }
-        public List<String> RawDataList { get; }
-        public string IntegralValue { get => viewData?.spline?.Integral.ToString() ?? ""; }
-        /*
-        public List<SplineDataItem> SplineDataList
-        {
-            get { return viewData?.spline?.DataItems; }
-        }   
-        */
-        public List<String> SplineDataList
-        {
-            get;
-        }
-        public static RoutedCommand ExecuteRawDataFromControlsCommand = new RoutedCommand("ExecuteRawDataFromControlsCommand", typeof(MainWindow));
-        public static RoutedCommand ExecuteRawDataFromFileCommand = new RoutedCommand("ExecuteRawDataFromFileCommand", typeof(MainWindow));
-        public BindingExpression exp;
         public MainWindow()
         {
-            viewData = new ViewData();
-            RawDataList = new List<string>();
-            SplineDataList = new List<String>();
             InitializeComponent();
-            exp = TextBlockIntegral.GetBindingExpression(TextBlock.TextProperty);
-            DataContext = viewData;
-            this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromControlsCommand, FromCtrls_Click, CanExecuteRawDataFromControlsCommandHandler));
-            this.CommandBindings.Add(new CommandBinding(ExecuteRawDataFromFileCommand, FromFile_Click, CanExecuteRawDataFromFileCommandHandler));
-            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, Save_Click, CanSaveCommandHandler));
-
+            DataContext = new ViewData(new MessageBoxErrorReporter(), new DialogWindows());
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -64,108 +39,82 @@ namespace Lab1_UI_6sem
 
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            viewData.InitRawData();
-            Microsoft.Win32.SaveFileDialog saver = new Microsoft.Win32.SaveFileDialog();
-            if ((bool)saver.ShowDialog() && viewData != null)
-            {
-                viewData.Save(saver.FileName);
-                MessageBox.Show("Raw data\n saved successful!");
-            }
-            else
-            {
-                MessageBox.Show("Error on saving\nraw data!");
-            }
-        }
+
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void FromCtrls_Click(object sender, RoutedEventArgs e)
-        {
-            viewData.InitRawData();
-            viewData.InitSpline();
-            viewData.Interpolate();
-            //TextBlockIntegral.Refresh();
-            rawDataLb.Items.Refresh();
-            splineLb.Items.Refresh();
-            exp.UpdateTarget();
-            plot = new OxyPlotModel(viewData.spline, viewData.data);
-            main_plot.Model = plot.plotModel;
-        }
 
-        private void FromFile_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog loader = new Microsoft.Win32.OpenFileDialog();
-            try {
-                if ((bool)loader.ShowDialog())
-                {
-                    viewData.InitRawDataFromFile(loader.FileName);
-                    viewData.InitSpline();
-                    viewData.Interpolate();
-                    rawDataLb.Items.Refresh();
-                    splineLb.Items.Refresh();
-                    exp.UpdateTarget();
-                    plot = new OxyPlotModel(viewData.spline, viewData.data);
-                    main_plot.Model = plot.plotModel;
-                }
-                else
-                {
-                    MessageBox.Show("Error on loading\n raw data!");
-                }
-            }
-            catch(Exception x) {
-                MessageBox.Show("Wrong data read\n from file!!!");
-            }
-        }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
 
-        public void RawData_Init()
+    }
+
+    public class MessageBoxErrorReporter : IErrorReporter
+    {
+        public void reportError(string message)
         {
-            switch (viewData.Func) {
-                case FRawEnum.FRawLinear:
-                    viewData.data = new RawData(viewData.Left, viewData.Right, viewData.NodeCnt, viewData.IsUniform, RawData.FRawLinear);
-                    break;
-                case FRawEnum.FRawCubic:
-                    viewData.data = new RawData(viewData.Left, viewData.Right, viewData.NodeCnt, viewData.IsUniform, RawData.FRawCubic);
-                    break;
-                case FRawEnum.FRawRandom:
-                    viewData.data = new RawData(viewData.Left, viewData.Right, viewData.NodeCnt, viewData.IsUniform, RawData.FRawRandom);
-                    break;
+            MessageBox.Show(message);
+        }
+    }
+
+    public class DialogWindows: IDialogWindows
+    {
+        public bool openForSave(out string filename)
+        {
+            Microsoft.Win32.SaveFileDialog saver = new Microsoft.Win32.SaveFileDialog();
+            if ((bool)saver.ShowDialog())
+            {
+                filename = saver.FileName;
+                return true;
+            }
+            else
+            {
+                filename = "Error on saving\nraw data!";
+                return false;
             }
         }
 
-        private void CanExecuteRawDataFromControlsCommandHandler(object sender, CanExecuteRoutedEventArgs e)
+        public bool openForLoad(out string filename)
         {
-            if (Validation.GetHasError(Right) || Validation.GetHasError(NodeCnt) || Validation.GetHasError(NodeCntSpline))
-                e.CanExecute = false;
-            else
-                e.CanExecute = true;
-        }
-        private void CanExecuteRawDataFromFileCommandHandler(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (Validation.GetHasError(NodeCntSpline))
-                e.CanExecute = false;
-            else
-                e.CanExecute = true;
-        }
-        private void CanSaveCommandHandler(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (Validation.GetHasError(NodeCnt) || Validation.GetHasError(Right))
+            Microsoft.Win32.OpenFileDialog loader = new Microsoft.Win32.OpenFileDialog();
+            try
             {
-                e.CanExecute = false;
+                if ((bool)loader.ShowDialog())
+                {
+                    filename = loader.FileName;
+                    return true;
+                }
+                else
+                {
+                    filename = "Error on loading\n raw data!";
+                    return false;
+                }
             }
-            else
-                e.CanExecute = true;
+            catch (Exception x)
+            {
+                filename = x.Message;
+                return false;
+            }
         }
     }
+
+    /*
+    public class Refresher : IRefresher
+    {
+        public void refreshUi(params ListBox[] lbs)
+        {
+            foreach(ListBox l in lbs)
+            {
+                l.Items.Refresh();
+            }
+        }
+    }*/
 }
 
 namespace Converters
